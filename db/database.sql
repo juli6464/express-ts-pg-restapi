@@ -16,12 +16,12 @@ CREATE TABLE wallets (
   address VARCHAR(255) NOT NULL UNIQUE
 );
 
--- Datos para la tabla users
+-- table users
 INSERT INTO users (name,email,password)
-    VALUES ('Juan','juan@mail.com','$2a$12$xs/5mJ5W4tt35hu9xVfGL.rq9yEqqeavfNtKanhdFWUQXDesrKwue'),   --123456
-           ('Pedro','pedro@mail.com','$2a$12$vQj7GaQ4WBQmBPaIRRU9quaBpiAskHcUYYbsCT6plZq9ukQJdhW7q'); --1234ab
+    VALUES ('Juan','juan@mail.com','$2a$12$P4kD/dTthEG4WIZQ/9PDc./1dj5g/kzFGpvXw0YWW.MF2DyhE3rk.'),   --12345678
+           ('Pedro','pedro@mail.com','$2a$12$r8QZ6BTCG0bjfgsnyitVSeWkYNsQETuUh/tvcOqRDrYKrIseeRBJu'); --12345678
 
--- Datos para la tabla wallets
+-- table wallets
 INSERT INTO wallets (user_id, tag, chain, address)
   VALUES 
     (1, 'Wallet principal', 'Ethereum', '0xAbc1234567890abcdefABCDEF1234567890abcd'),

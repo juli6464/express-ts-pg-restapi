@@ -3,30 +3,9 @@ import { QueryResult} from 'pg'
 import bcrypt from 'bcrypt'
 import { pool } from '../database'
 import jwt from 'jsonwebtoken'
+import validator from 'validator'
 
 const SECRET_KEY = process.env.SECRET_KEY as string
-
-export const loginUser = async (req: Request, res: Response): Promise<Response> => {
-    const { email, password } = req.body
-
-    const result: QueryResult = await pool.query('SELECT * FROM users WHERE email = $1', [email])
-    const user = result.rows[0]
-
-    if (!user) {
-        return res.status(404).json({ message: 'User not found' })
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password)
-
-    if (!passwordMatch) {
-        return res.status(401).json({ message: 'Incorrect password' })
-    }
-
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' })
-
-    return res.json({ message: 'Login successful', token })
-}
-
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -43,12 +22,15 @@ export const getUserById = async (req: Request, res: Response): Promise<Response
         const id = parseInt(req.params.id);
         const response: QueryResult  = await pool.query('SELECT * FROM users WHERE id= $1', [id]);
         return res.json(response.rows)
-
-
 }
 
 export const createUser = async (req: Request, res: Response): Promise<Response> => {
     const { name,email, password } = req.body
+
+    if (!validator.isEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email format' })
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
     const response: QueryResult = await pool.query(
         'INSERT INTO users (name,email,password) VALUES ($1,$2,$3)', 
@@ -66,6 +48,11 @@ export const createUser = async (req: Request, res: Response): Promise<Response>
 export const updateUser = async (req: Request, res: Response): Promise<Response> => {
     const id = parseInt(req.params.id);
     const { name, email, password } = req.body
+
+    if (!validator.isEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email format' })
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
     await pool.query('UPDATE users SET name=$1, email=$2, password=$3 WHERE id=$4', 
         [name, email, hashedPassword, id])
@@ -81,6 +68,37 @@ export const deleteUser = async (req: Request, res: Response): Promise<Response>
     const id = parseInt(req.params.id);
     await pool.query('DELETE FROM users WHERE id= $1', [id]);
     return res.json(`User ${id} deleted successfully`)
+}
+
+
+export const loginUser = async (req: Request, res: Response): Promise<Response> => {
+    const { email, password } = req.body
+
+    if (!validator.isEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email format' })
+    }
+
+    const result: QueryResult = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+    const user = result.rows[0]
+
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password)
+
+    if (!validator.isLength(password, { min: 8 })) {
+        return res.status(400).json({ message: 'Password must be at least 8 characters long' })
+    }
+
+    if (!passwordMatch) {
+        return res.status(401).json({ message: 'Incorrect password' })
+    }
+
+    // const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' })
+    const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: '1h' });
+
+    return res.json({ message: 'Login successful', token })
 }
 
 export const logoutUser = (req: Request, res: Response): Response => {

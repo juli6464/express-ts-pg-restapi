@@ -5,7 +5,7 @@ const SECRET_KEY = process.env.SECRET_KEY as string
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1] // Espera: Authorization: Bearer <token>
+    const token = authHeader && authHeader.split(' ')[1] 
 
     if (!token) {
         return res.status(401).json({ message: 'Token not provided' })
