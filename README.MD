@@ -9,39 +9,40 @@ Technologies.
 
 ## Features
 
-- Clone the repository and insert in Postgres db/database.sql queries.
+- Clone the repository and run the SQL queries from db/database.sql in your PostgreSQL server.
 - Rename 
 ```sh
 .env.example to .env
 ``` 
-- Import the json script in Postman express-ts-pg-restapi.postman_collection.json who is located in the project repository.
-- Chech the User endpoints on Postman with url http://localhost:4000/.
+and configure your environment variables.
+- Import the Postman collection express-ts-pg-restapi.postman_collection.json from the project.
+- Test the user endpoints using Postman at http://localhost:4000/.
 
 
 ## Installation
 
-Install the dependencies and devDependencies and start the server.
+Install dependencies and start the development server:
 
 ```sh
 npm i
 npm run dev
 ```
 
-## What Includes the project
+## Project Includes
 
-### Databases
-- Databases (Users and Wallets tables).
+### Database
+- PostgreSQL with Users and Wallets tables.
 
 ### Api
-- Sign in a user and sing out endpoints with auth.
-- Users and Wallets CRUD endpoints with auth.
+- User registration and login and logout endpoints with authentication.
+- Full CRUD endpoints for Users and Wallets (protected by authentication).
 
 ### Auth & Security
-- Auth with JWT for authentication.
-- Security passwords with bcrypt library.
+- JWT-based authentication.
+- Password encryption with bcrypt.
 
 ### Error Handling
-- Invalid mail format, password validation.
-- Return HTTP status codes.
+- Validation for email format and password.
+- Returns appropriate HTTP status codes for errors.
 
 
