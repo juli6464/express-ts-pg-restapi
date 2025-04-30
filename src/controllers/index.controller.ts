@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import { QueryResult} from 'pg'
+import bcrypt from 'bcrypt'
+
 
 import { pool } from '../database'
 
@@ -24,11 +26,15 @@ export const getUserById = async (req: Request, res: Response): Promise<Response
 
 export const createUser = async (req: Request, res: Response): Promise<Response> => {
     const { name,email, password } = req.body
-    const response: QueryResult = await pool.query('INSERT INTO users (name,email,password) VALUES ($1,$2,$3)', [name,email,password])
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const response: QueryResult = await pool.query(
+        'INSERT INTO users (name,email,password) VALUES ($1,$2,$3)', 
+        [name,email,hashedPassword]
+    )
     return res.json({
         message: 'User created successfully',
         body: {
-            user: { name, email, password }
+            user: { name, email }
         }
 
     })
@@ -37,11 +43,13 @@ export const createUser = async (req: Request, res: Response): Promise<Response>
 export const updateUser = async (req: Request, res: Response): Promise<Response> => {
     const id = parseInt(req.params.id);
     const { name, email, password } = req.body
-    await pool.query('UPDATE users SET name=$1, email=$2, password=$3 WHERE id=$4', [name, email, password, id])
+    const hashedPassword = await bcrypt.hash(password, 10)
+    await pool.query('UPDATE users SET name=$1, email=$2, password=$3 WHERE id=$4', 
+        [name, email, hashedPassword, id])
     return res.json({
         message: `User ${id} updated successfully`,
         body: {
-            user: { name, email, password }
+            user: { name, email }
         }
     })
 }

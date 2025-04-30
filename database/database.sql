@@ -30,6 +30,6 @@ INSERT INTO wallets (user_id, tag, chain, address)
     (2, 'Cold Storage', 'Bitcoin', '1BoatSLRHtKNngkdXEeobR76b53LETtpyT');
     
 --Some commands in SQL shell
--- \l  lista base de datos
--- \c typescriptdatabase;   selecciona tabla
---   \d  lista tabla
+-- \l  DB list
+-- \c typescriptdatabase;   select table
+--   \d  show table
